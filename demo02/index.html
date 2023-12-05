@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <style>
+        #drop_dom_element {
+            width: 100%;
+            height: 100px;
+            outline: 1px darkcyan solid;
+        }
+
+        #dropzone {
+            /*width: 200px;*/
+            height: 200px;
+            border: 2px dashed #ccc;
+            text-align: center;
+            line-height: 200px;
+            font-size: 24px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+<!--<div id="drop_dom_element">Drop files here</div>-->
+<div id="dropzone">将文件拖到此处或点击选择文件</div>
+<input type="file" id="file-input">
+
+<div id="qrcode" style="display: none"></div>
+<canvas id="result"></canvas>
+<!--<svg width="400" height="200" viewBox="0 0 400 200">-->
+<!--    <text id="text" x="200" y="100" font-size="24" text-anchor="middle" alignment-baseline="middle" display="block" style="width: 100%; height: 100%">sssssssssssssssssssssssssssssssssssssssssssssssssssss sssssssssss</text>-->
+<!--</svg>-->
+
+<script src="https://cdn.bootcdn.net/ajax/libs/exceljs/4.3.0/exceljs.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/qrcodejs/1.0.0/qrcode.js"></script>
+<script>
+
+    function lis() {
+        var dropzone = document.getElementById('dropzone');
+        var fileInput = document.getElementById('file-input');
+
+        // 阻止浏览器默认的拖拽行为
+        dropzone.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+        });
+
+        dropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            var files = e.dataTransfer.files;
+
+            // 处理上传的文件
+            handleFiles(files);
+        });
+
+        dropzone.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            var files = fileInput.files;
+
+            // 处理上传的文件
+            handleFiles(files);
+        });
+    }
+    lis()
+
+    function handleFiles(files) {
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            // 这里可以执行上传文件的操作，例如使用AJAX将文件发送到服务器
+
+            // 输出文件信息
+            console.log('文件名:', file.name);
+            console.log('文件大小:', file.size);
+            console.log('文件类型:', file.type);
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var data = e.target.result;
+                /* reader.readAsArrayBuffer(file) -> data will be an ArrayBuffer */
+                fun(data)
+
+                /* DO SOMETHING WITH workbook HERE */
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    }
+
+
+    let qr = new QRCode(document.getElementById("qrcode"), {
+        width: 400,
+        height: 400
+    })
+    let canvas2 = document.getElementById("result");
+    let context2 = canvas2.getContext("2d");
+
+    const canvas1 = document.getElementById("qrcode").getElementsByTagName('canvas')[0]
+
+    async function fun(buffer) {
+
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(buffer);
+        const sheet1 = workbook.getWorksheet(1)
+        let col1 = sheet1.getColumn(1)
+        canvas2.width = 400
+        canvas2.height = 600 * col1.values.length+1000
+
+        let i = 0
+
+        col1.eachCell((cell, rownumber) => {
+            const value = cell.text
+            qr.clear()
+            qr.makeCode(value)
+
+            context2.textAlign = "center";
+            context2.font = '40px sans-serif';
+            context2.fillStyle = "#000000"
+            // context2.textBaseline = 'middle';
+
+            context2.wrapText(value,200, 600 * i+30 + 100, 400, 50)
+
+            context2.drawImage(canvas1, 0, 600 * i + 200);
+            i++
+        })
+
+        const url = canvas2.toDataURL()
+        downloadURI(url, 'text')
+    }
+
+    function downloadURI(uri, name) {
+        var link = document.createElement('a');
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        delete link;
+    }
+
+
+    CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, lineHeight) {
+        if (typeof text != 'string' || typeof x != 'number' || typeof y != 'number') {
+            return;
+        }
+
+        var context = this;
+        var canvas = context.canvas;
+
+        if (typeof maxWidth == 'undefined') {
+            maxWidth = (canvas && canvas.width) || 300;
+        }
+        if (typeof lineHeight == 'undefined') {
+            lineHeight = (canvas && parseInt(window.getComputedStyle(canvas).lineHeight)) || parseInt(window.getComputedStyle(document.body).lineHeight);
+        }
+
+        // 字符分隔为数组
+        var arrText = text.split('');
+        var line = '';
+
+        for (var n = 0; n < arrText.length; n++) {
+            var testLine = line + arrText[n];
+            var metrics = context.measureText(testLine);
+            var testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                context.fillText(line, x, y);
+                line = arrText[n];
+                y += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        context.fillText(line, x, y);
+    };
+</script>
+</body>
+</html>

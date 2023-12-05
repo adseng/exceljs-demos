@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #drop_dom_element {
+        width: 100%;
+        height: 1000px;
+        outline: 1px darkcyan solid;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="drop_dom_element">Drop files here</div>
+    <!-- use version 0.20.0 -->
+    <script
+      lang="javascript"
+      src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"
+    ></script>
+    <script>
+      function handleDrop(e) {
+        console.log("jjj");
+        e.stopPropagation();
+        e.preventDefault();
+        var f = e.dataTransfer.files[0];
+        /* f is a File */
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var data = e.target.result;
+          /* reader.readAsArrayBuffer(file) -> data will be an ArrayBuffer */
+          var workbook = XLSX.read(data);
+          console.log(workbook);
+          let ws = workbook.Sheets[workbook.SheetNames[0]];
+        //   for (let i = 5; i <= 35; i++) {
+        //     ws["B" + i] = { t: "s", v: "test" };
+        //   }
+        //   XLSX.writeFile(workbook, "test.xlsx");
+
+          /* DO SOMETHING WITH workbook HERE */
+        };
+        reader.readAsArrayBuffer(f);
+      }
+
+      drop_dom_element = document.getElementById("drop_dom_element");
+      // 阻止浏览器默认的拖拽行为
+      drop_dom_element.addEventListener("dragenter", function (e) {
+        e.preventDefault();
+      });
+
+      drop_dom_element.addEventListener("dragover", function (e) {
+        e.preventDefault();
+      });
+      drop_dom_element.addEventListener("drop", handleDrop, false);
+    </script>
+  </body>
+</html>
