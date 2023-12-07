@@ -18,7 +18,7 @@ devDependencies:
     specifier: 3.2.1
     version: registry.npmmirror.com/html-inline-script-webpack-plugin@3.2.1(html-webpack-plugin@5.5.3)(webpack@5.89.0)
   html-webpack-plugin:
-    specifier: ^5.5.3
+    specifier: 5.5.3
     version: registry.npmmirror.com/html-webpack-plugin@5.5.3(webpack@5.89.0)
   lodash:
     specifier: 4.17.21
