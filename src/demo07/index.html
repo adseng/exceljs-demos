@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>排座位</title>
+    <style>
+      body {
+        text-align: center;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      table {
+        text-align: center;
+      }
+
+      td {
+        width: 100px;
+        height: 50px;
+        border: 1px solid #000;
+      }
+
+      td:nth-child(2n) {
+        width: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+      </tr>
+      <tr class="row">
+        <td></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr>
+        <td colspan="9">讲台</td>
+      </tr>
+    </table>
+
+    <div>
+      <input type="button" value="开始" class="start" />
+      <input type="button" value="结束" class="end" />
+      <input type="button" value="下载excel" class="exportExcel" />
+    </div>
+      
+  </body>
+</html>

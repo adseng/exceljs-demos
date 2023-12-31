@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>排座位</title>
+    <style>
+      body {
+        text-align: center;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      table {
+        text-align: center;
+      }
+
+      td {
+        width: 100px;
+        height: 50px;
+        border: 1px solid #000;
+      }
+
+      td:nth-child(2n) {
+        width: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+        <td rowspan="6">走廊</td>
+        <td></td>
+      </tr>
+      <tr class="row">
+        <td></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr class="row">
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+        <!-- <td></td> -->
+        <td class="seat"></td>
+      </tr>
+      <tr>
+        <td colspan="9">讲台</td>
+      </tr>
+    </table>
+
+    <div>
+      <input type="button" value="重新排序" class="reflow" />
+      <input type="button" value="下载excel" class="exportExcel" />
+    </div>
+
+    <script>
+      //         随机座位要求
+      // 1.共23个同学，分为五组，其中中间三组坐5个人左右个坐两组坐4人
+      // 2.让21号和22号一直做同桌（在两相邻组）
+      const stdList = [
+        "曾雅萱",
+        "陈亚楠",
+        "代沁芯",
+        "何颜西",
+        "何一然",
+        "贾舒斐",
+        "金彤",
+        "李昕怡",
+        "廖元柯",
+        "刘博文",
+        "罗婧洋",
+        "吕晨",
+        "毛艺星",
+        "潘奕亦",
+        "蒲睿轩",
+        "秦艺轩",
+        "王紫嫣",
+        "张庭轩",
+        "张婉玲",
+        "张雅雯",
+        "赵雨晴",
+      ];
+      const nearList = ["赵家钰", "赵宇轩"];
+
+      function fun() {
+        // 坐在一起的，坐在哪一列        const nearCol = randomNum(1, 5);
+
+        const rows = document.querySelectorAll(".row");
+        const rlen = rows.length;
+        if (rlen == 0) {
+          return;
+        }
+
+        // 坐在第几行
+        const seatRowNum = randomNum(1, 5);
+        let seatOfTow = [];
+        if (1 === seatRowNum) {
+          seatOfTow = randomTwoNum(1, 3);
+        } else {
+          seatOfTow = randomTwoNum(1, 5);
+        }
+
+        const whereRowSeat = rows[seatRowNum - 1];
+        const seats = whereRowSeat.querySelectorAll(".seat");
+        // "赵家钰", "赵宇轩" 谁在前面
+        const a = randomNum(0, 1);
+
+        seats[seatOfTow[0] - 1].innerText = nearList[a];
+        seats[seatOfTow[1] - 1].innerText = nearList[1 - a];
+        seats[seatOfTow[0] - 1].style.background = "rgb(139 195 74 / 30%)";
+        seats[seatOfTow[1] - 1].style.background = "rgb(139 195 74 / 30%)";
+
+        const seatsAll = document.querySelectorAll(".seat");
+        randomSort(stdList);
+        let index = 0;
+        seatsAll.forEach((item) => {
+          if (item.innerText) {
+            return;
+          }
+          item.innerText = stdList[index];
+          index++;
+        });
+      }
+
+      function clear() {
+        const seatsAll = document.querySelectorAll(".seat");
+        seatsAll.forEach((item) => {
+          item.innerText = "";
+          item.style.background = "none";
+        });
+      }
+
+      function start() {
+        clear();
+        fun();
+      }
+
+      function exportExcel() {
+        const table = document.querySelector("table");
+
+        uploadExcel(table.innerHTML, "未命名.xlsx");
+      }
+
+      function uploadExcel(_data, fileName) {
+        const blob = new Blob([_data]);
+        const url = URL.createObjectURL(blob);
+        const aLink = document.createElement("a");
+        aLink.setAttribute("download", fileName);
+        aLink.setAttribute("href", url);
+        document.body.appendChild(aLink);
+        aLink.click();
+        document.body.removeChild(aLink);
+        URL.revokeObjectURL(blob);
+      }
+
+      function randomNum(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+      }
+      // 从 a，b之间选两个相邻的数
+      function randomTwoNum(a, b) {
+        const rd = randomNum(a, b - 1);
+        return [rd, rd + 1];
+      }
+      // 随机排列数组a
+      function randomSort(a) {
+        for (let i = 0; i < a.length; i++) {
+          const rd = randomNum(0, a.length - 1);
+          const temp = a[i];
+          a[i] = a[rd];
+          a[rd] = temp;
+        }
+      }
+
+      document.querySelector(".reflow").addEventListener("click", () => {
+        start();
+      });
+      document.querySelector(".exportExcel").addEventListener("click", () => {
+        exportExcel();
+      });
+
+      start();
+    </script>
+  </body>
+</html>
